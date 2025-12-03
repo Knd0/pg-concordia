@@ -1,27 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { AndreaniService } from './providers/andreani.service';
+import { OcaService } from './providers/oca.service';
+import { ShippingQuote } from './interfaces/shipping-provider.interface';
 
 @Injectable()
 export class ShippingService {
-  calculateCost(zipCode: string): number {
-    const zip = parseInt(zipCode, 10);
+  constructor(
+    private andreaniService: AndreaniService,
+    private ocaService: OcaService
+  ) {}
 
-    if (isNaN(zip)) {
-      return 0;
-    }
+  async calculateCost(zipCode: string): Promise<{ quotes: ShippingQuote[] }> {
+    // Default weight and volume for now
+    const weight = 1; 
+    const volume = 0.1;
 
-    // Mock Logic:
-    // Concordia (3200) -> Free
-    // Entre Rios (3000-3300) -> $5000
-    // Rest of country -> $8000
-    
-    if (zip === 3200) {
-      return 0;
-    }
+    const [andreaniQuote, ocaQuote] = await Promise.all([
+      this.andreaniService.getQuote(zipCode, weight, volume),
+      this.ocaService.getQuote(zipCode, weight, volume)
+    ]);
 
-    if (zip >= 3000 && zip <= 3300) {
-      return 5000;
-    }
+    const quotes: ShippingQuote[] = [];
+    if (andreaniQuote) quotes.push(andreaniQuote);
+    if (ocaQuote) quotes.push(ocaQuote);
 
-    return 8000;
+    return { quotes };
   }
 }

@@ -15,7 +15,8 @@ import { Router } from '@angular/router';
 })
 export class CheckoutComponent implements OnInit {
   items: any[] = [];
-  shippingCost: number = 0;
+  shippingOptions: any[] = [];
+  selectedShippingOption: any = null;
   zipCode: string = '';
   customer = {
     name: '',
@@ -29,7 +30,7 @@ export class CheckoutComponent implements OnInit {
 
   constructor(
     private cartService: CartService,
-    private builderService: BuilderService, // Check if BuilderService is exported correctly
+    private builderService: BuilderService,
     private paymentService: PaymentService,
     private router: Router
   ) {}
@@ -49,14 +50,17 @@ export class CheckoutComponent implements OnInit {
   }
 
   get total() {
-    return this.subtotal + this.shippingCost;
+    return this.subtotal + (this.selectedShippingOption?.cost || 0);
   }
 
   async calculateShipping() {
     if (this.zipCode.length >= 4) {
       this.paymentService.calculateShipping(this.zipCode).subscribe({
         next: (res) => {
-          this.shippingCost = res.cost;
+          this.shippingOptions = res.quotes;
+          if (this.shippingOptions.length > 0) {
+            this.selectedShippingOption = this.shippingOptions[0];
+          }
         },
         error: (err) => console.error(err)
       });
@@ -64,10 +68,15 @@ export class CheckoutComponent implements OnInit {
   }
 
   pay() {
+    if (!this.selectedShippingOption) {
+      alert('Por favor selecciona una opción de envío');
+      return;
+    }
+
     this.loading = true;
-    this.paymentService.createPreference(this.items, this.shippingCost).subscribe({
+    this.paymentService.createPreference(this.items, this.selectedShippingOption.cost).subscribe({
       next: (res) => {
-        window.location.href = res.init_point; // Production URL
+        window.location.href = res.init_point;
       },
       error: (err) => {
         console.error(err);

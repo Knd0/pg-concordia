@@ -8,28 +8,34 @@
       <form (ngSubmit)="pay()" class="space-y-4">
         <div>
           <label class="block text-gray-300 mb-1">Nombre Completo</label>
-          <input [(ngModel)]="customer.name" name="name" type="text" class="w-full bg-gray-700 text-white rounded p-2" required>
+          <input [(ngModel)]="customer.name" name="name" type="text" class="w-full bg-gray-700 text-white rounded p-2"
+            required>
         </div>
         <div>
           <label class="block text-gray-300 mb-1">Email</label>
-          <input [(ngModel)]="customer.email" name="email" type="email" class="w-full bg-gray-700 text-white rounded p-2" required>
+          <input [(ngModel)]="customer.email" name="email" type="email"
+            class="w-full bg-gray-700 text-white rounded p-2" required>
         </div>
         <div>
           <label class="block text-gray-300 mb-1">Teléfono</label>
-          <input [(ngModel)]="customer.phone" name="phone" type="tel" class="w-full bg-gray-700 text-white rounded p-2" required>
+          <input [(ngModel)]="customer.phone" name="phone" type="tel" class="w-full bg-gray-700 text-white rounded p-2"
+            required>
         </div>
         <div>
           <label class="block text-gray-300 mb-1">Dirección</label>
-          <input [(ngModel)]="customer.address" name="address" type="text" class="w-full bg-gray-700 text-white rounded p-2" required>
+          <input [(ngModel)]="customer.address" name="address" type="text"
+            class="w-full bg-gray-700 text-white rounded p-2" required>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-gray-300 mb-1">Ciudad</label>
-            <input [(ngModel)]="customer.city" name="city" type="text" class="w-full bg-gray-700 text-white rounded p-2" required>
+            <input [(ngModel)]="customer.city" name="city" type="text" class="w-full bg-gray-700 text-white rounded p-2"
+              required>
           </div>
           <div>
             <label class="block text-gray-300 mb-1">Código Postal</label>
-            <input [(ngModel)]="zipCode" name="zipCode" type="text" class="w-full bg-gray-700 text-white rounded p-2" (blur)="calculateShipping()" required>
+            <input [(ngModel)]="zipCode" name="zipCode" type="text" class="w-full bg-gray-700 text-white rounded p-2"
+              (blur)="calculateShipping()" required>
           </div>
         </div>
       </form>
@@ -44,7 +50,7 @@
           <span>${{ item.unit_price * item.quantity | number }}</span>
         </div>
       </div>
-      
+
       <div class="border-t border-gray-700 pt-4 space-y-2">
         <div class="flex justify-between text-gray-300">
           <span>Subtotal</span>
@@ -52,7 +58,27 @@
         </div>
         <div class="flex justify-between text-gray-300">
           <span>Envío</span>
-          <span>${{ shippingCost | number }}</span>
+          <span *ngIf="!selectedShippingOption" class="text-sm italic">Calculando...</span>
+          <span *ngIf="selectedShippingOption">${{ selectedShippingOption.cost | number }}</span>
+        </div>
+
+        <!-- Shipping Options -->
+        <div *ngIf="shippingOptions.length > 0" class="space-y-2 mt-2">
+          <div *ngFor="let option of shippingOptions"
+            class="flex items-center justify-between p-3 rounded border cursor-pointer transition-colors"
+            [class.border-blue-500]="selectedShippingOption === option"
+            [class.bg-blue-500_10]="selectedShippingOption === option"
+            [class.border-gray-600]="selectedShippingOption !== option" (click)="selectedShippingOption = option">
+            <div class="flex items-center gap-3">
+              <input type="radio" [name]="'shipping'" [value]="option" [(ngModel)]="selectedShippingOption"
+                class="text-blue-500 focus:ring-blue-500">
+              <div>
+                <div class="font-medium text-white">{{ option.name }}</div>
+                <div class="text-xs text-gray-400">{{ option.deliveryEstimate }}</div>
+              </div>
+            </div>
+            <div class="font-bold text-white">${{ option.cost | number }}</div>
+          </div>
         </div>
         <div class="flex justify-between text-xl font-bold text-white pt-2 border-t border-gray-700">
           <span>Total</span>
@@ -60,8 +86,8 @@
         </div>
       </div>
 
-      <button (click)="pay()" [disabled]="loading || !customer.name || !zipCode" 
-              class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+      <button (click)="pay()" [disabled]="loading || !customer.name || !zipCode"
+        class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
         {{ loading ? 'Procesando...' : 'Pagar con Mercado Pago' }}
       </button>
     </div>

@@ -6,8 +6,7 @@ export class ShippingController {
   constructor(private readonly shippingService: ShippingService) {}
 
   @Get('calculate')
-  calculate(@Query('zipCode') zipCode: string) {
-    const cost = this.shippingService.calculateCost(zipCode);
-    return { cost };
+  async calculate(@Query('zipCode') zipCode: string) {
+    return this.shippingService.calculateCost(zipCode);
   }
 }

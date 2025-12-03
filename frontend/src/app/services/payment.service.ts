@@ -21,8 +21,8 @@ export class PaymentService {
     return this.http.post<{ init_point: string, sandbox_init_point: string }>(`${this.apiUrl}/preference`, { items, shippingCost });
   }
 
-  calculateShipping(zipCode: string): Observable<{ cost: number }> {
-    return this.http.get<{ cost: number }>(`${this.shippingUrl}/calculate?zipCode=${zipCode}`);
+  calculateShipping(zipCode: string): Observable<{ quotes: any[] }> {
+    return this.http.get<{ quotes: any[] }>(`${this.shippingUrl}/calculate?zipCode=${zipCode}`);
   }
   
   getStatus(): Observable<{ linked: boolean }> {
