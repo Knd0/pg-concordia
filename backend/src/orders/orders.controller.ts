@@ -14,12 +14,12 @@ export class OrdersController {
 
   @Post(':id/finalize')
   finalize(@Param('id') id: string) {
-    return this.ordersService.finalizeOrder(+id);
+    return this.ordersService.finalizeOrder(id);
   }
 
   @Patch(':id/description')
   updateDescription(@Param('id') id: string, @Body('description') description: string) {
-    return this.ordersService.updateDescription(+id, description);
+    return this.ordersService.updateDescription(id, description);
   }
 
   @Get()
@@ -29,16 +29,16 @@ export class OrdersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+    return this.ordersService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+    return this.ordersService.update(id, updateOrderDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+    return this.ordersService.remove(id);
   }
 }

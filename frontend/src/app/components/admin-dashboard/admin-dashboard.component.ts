@@ -133,7 +133,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  deleteOrder(orderId: number) {
+  deleteOrder(orderId: string) {
     if (confirm('¿Estás seguro de eliminar este pedido?')) {
       this.apiService.deleteOrder(orderId).subscribe({
         next: () => {
@@ -148,7 +148,7 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  finalizeOrder(orderId: number) {
+  finalizeOrder(orderId: string) {
     if (confirm('¿Finalizar pedido y descontar stock?')) {
       this.apiService.finalizeOrder(orderId).subscribe({
         next: () => {
