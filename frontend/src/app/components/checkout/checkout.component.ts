@@ -50,10 +50,12 @@ export class CheckoutComponent implements OnInit {
   }
 
   get total() {
-    return this.subtotal + (this.selectedShippingOption?.cost || 0);
+    return this.subtotal; // + (this.selectedShippingOption?.cost || 0);
   }
 
   async calculateShipping() {
+    // Shipping disabled for now
+    /*
     if (this.zipCode.length >= 4) {
       this.paymentService.calculateShipping(this.zipCode).subscribe({
         next: (res) => {
@@ -65,16 +67,20 @@ export class CheckoutComponent implements OnInit {
         error: (err) => console.error(err)
       });
     }
+    */
   }
 
   pay() {
+    /*
     if (!this.selectedShippingOption) {
       alert('Por favor selecciona una opción de envío');
       return;
     }
+    */
 
     this.loading = true;
-    this.paymentService.createPreference(this.items, this.selectedShippingOption.cost).subscribe({
+    // Use 0 for shipping cost
+    this.paymentService.createPreference(this.items, 0).subscribe({
       next: (res) => {
         window.location.href = res.init_point;
       },
