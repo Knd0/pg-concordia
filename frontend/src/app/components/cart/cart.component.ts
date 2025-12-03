@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService, CartItem } from '../../services/cart.service';
@@ -134,11 +135,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
             </div>
           </div>
 
-          <button (click)="checkout()" 
-            [disabled]="!isValid() || loading"
-            class="w-full py-4 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
-            <span *ngIf="!loading">Confirmar Pedido</span>
-            <span *ngIf="loading">Procesando...</span>
+          <button (click)="goToCheckout()" 
+            [disabled]="!cartService.getTotalPrice()"
+            class="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-blue-500/20 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+            Finalizar Compra
           </button>
         </div>
 
@@ -153,7 +153,8 @@ export class CartComponent {
   loading = false;
 
   constructor(
-    private cartService: CartService,
+    public cartService: CartService,
+    private router: Router,
     private apiService: ApiService,
     private notificationService: NotificationService
   ) {
@@ -190,36 +191,8 @@ export class CartComponent {
     return /^\d{7,15}$/.test(phone.replace(/\D/g, ''));
   }
 
-  checkout() {
-    if (!this.isValid()) return;
-    this.loading = true;
-
-    this.cartItems$.pipe(take(1)).subscribe(items => {
-      const orderData = {
-        items: items.map(item => ({
-          productId: item.product.id,
-          quantity: item.quantity
-        })),
-        customerName: this.customer.name,
-        customerContact: `${this.customer.phone} | ${this.customer.email}`,
-        type: 'CART'
-      };
-
-      this.apiService.createOrder(orderData).subscribe({
-        next: () => {
-          const link = this.cartService.generateWhatsAppLink(this.customer);
-          window.open(link, '_blank');
-          this.cartService.clearCart();
-          this.notificationService.success('Pedido registrado y WhatsApp abierto!');
-          this.close();
-          this.loading = false;
-        },
-        error: (err) => {
-          this.notificationService.error('Error al registrar el pedido. Intente nuevamente.');
-          console.error(err);
-          this.loading = false;
-        }
-      });
-    });
+  goToCheckout() {
+    this.close();
+    this.router.navigate(['/checkout']);
   }
 }

@@ -10,6 +10,8 @@ import { Order } from './orders/entities/order.entity';
 import { OrderItem } from './orders/entities/order-item.entity';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { PaymentModule } from './payment/payment.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -26,7 +28,7 @@ import { UsersModule } from './users/users.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         autoLoadEntities: true,
-        synchronize: true, // Auto-create tables (dev only)
+        synchronize: configService.get('DB_SYNCHRONIZE') === 'true', // Set to false in production
         ssl: configService.get('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
       }),
       inject: [ConfigService],
@@ -35,6 +37,8 @@ import { UsersModule } from './users/users.module';
     OrdersModule,
     AuthModule,
     UsersModule,
+    PaymentModule,
+    ShippingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

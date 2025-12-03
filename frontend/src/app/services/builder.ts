@@ -70,4 +70,19 @@ export class BuilderService {
 
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   }
+
+  getCheckoutItems() {
+    const state = this.buildStateSubject.value;
+    const items = [];
+    
+    if (state.cpu) items.push({ id: state.cpu.id, title: `PC Build: ${state.cpu.name}`, quantity: 1, unit_price: state.cpu.price });
+    if (state.motherboard) items.push({ id: state.motherboard.id, title: `PC Build: ${state.motherboard.name}`, quantity: 1, unit_price: state.motherboard.price });
+    if (state.ram) items.push({ id: state.ram.id, title: `PC Build: ${state.ram.name}`, quantity: 1, unit_price: state.ram.price });
+    if (state.gpu) items.push({ id: state.gpu.id, title: `PC Build: ${state.gpu.name}`, quantity: 1, unit_price: state.gpu.price });
+    if (state.storage) items.push({ id: state.storage.id, title: `PC Build: ${state.storage.name}`, quantity: 1, unit_price: state.storage.price });
+    if (state.psu) items.push({ id: state.psu.id, title: `PC Build: ${state.psu.name}`, quantity: 1, unit_price: state.psu.price });
+    if (state.case) items.push({ id: state.case.id, title: `PC Build: ${state.case.name}`, quantity: 1, unit_price: state.case.price });
+
+    return items;
+  }
 }

@@ -5,6 +5,7 @@ import { ApiService, Product } from '../../services/api';
 import { BuilderService, BuildState } from '../../services/builder';
 import { NotificationService } from '../../services/notification.service';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pc-builder',
@@ -130,11 +131,10 @@ import { Observable } from 'rxjs';
                 </div>
               </div>
 
-              <button (click)="consultar()" 
+              <button (click)="buy()" 
                  [disabled]="!isValid() || loading"
-                 class="block w-full py-4 bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-center font-bold rounded-xl transition-all shadow-lg hover:shadow-green-500/20 flex items-center justify-center gap-2">
-                <span *ngIf="!loading">Consultar por WhatsApp</span>
-                <span *ngIf="loading">Procesando...</span>
+                 class="block w-full py-4 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-center font-bold rounded-xl transition-all shadow-lg hover:shadow-purple-500/20 flex items-center justify-center gap-2">
+                <span>Comprar</span>
               </button>
             </div>
           </div>
@@ -174,7 +174,8 @@ export class PcBuilderComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private builderService: BuilderService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -211,36 +212,8 @@ export class PcBuilderComponent implements OnInit {
     return /^\d{7,15}$/.test(phone.replace(/\D/g, ''));
   }
 
-  consultar() {
+  buy() {
     if (!this.isValid()) return;
-    this.loading = true;
-
-    const items = Object.values(this.buildState)
-      .filter(item => item !== null)
-      .map(item => ({
-        productId: item.id,
-        quantity: 1
-      }));
-
-    const orderData = {
-      items,
-      customerName: this.customer.name,
-      customerContact: `${this.customer.phone} | ${this.customer.email}`,
-      type: 'BUILDER'
-    };
-
-    this.apiService.createOrder(orderData).subscribe({
-      next: () => {
-        const link = this.builderService.generateWhatsAppLink(this.customer);
-        window.open(link, '_blank');
-        this.notificationService.success('Consulta registrada y WhatsApp abierto!');
-        this.loading = false;
-      },
-      error: (err) => {
-        this.notificationService.error('Error al registrar la consulta. Intente nuevamente.');
-        console.error(err);
-        this.loading = false;
-      }
-    });
+    this.router.navigate(['/checkout']);
   }
 }

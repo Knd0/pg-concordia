@@ -11,5 +11,9 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminDashboardComponent },
   { path: 'builder', component: PcBuilderComponent },
+  {
+    path: 'checkout',
+    loadComponent: () => import('./components/checkout/checkout.component').then(m => m.CheckoutComponent)
+  },
   { path: '**', redirectTo: '' }
 ];

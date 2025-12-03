@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService, Product } from '../../services/api';
-import { Router } from '@angular/router';
+import { PaymentService } from '../../services/payment.service';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 
@@ -13,10 +14,11 @@ import { NotificationService } from '../../services/notification.service';
   templateUrl: './admin-dashboard.component.html',
 })
 export class AdminDashboardComponent implements OnInit {
-  activeTab: 'stock' | 'offers' | 'create' | 'orders' = 'stock';
+  activeTab: 'stock' | 'offers' | 'create' | 'orders' | 'settings' = 'stock';
   products: Product[] = [];
   filteredProducts: Product[] = [];
   orders: any[] = [];
+  mpLinked = false;
 
   // Filters
   filterType = 'all';
@@ -26,7 +28,9 @@ export class AdminDashboardComponent implements OnInit {
     private apiService: ApiService, 
     private router: Router,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private paymentService: PaymentService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -35,6 +39,26 @@ export class AdminDashboardComponent implements OnInit {
       return;
     }
     this.loadData();
+    this.checkMpStatus();
+    
+    this.route.queryParams.subscribe(params => {
+        if (params['status'] === 'success') {
+            this.activeTab = 'settings';
+            this.notificationService.success('Mercado Pago vinculado correctamente');
+        }
+    });
+  }
+
+  checkMpStatus() {
+      this.paymentService.getStatus().subscribe(res => {
+          this.mpLinked = res.linked;
+      });
+  }
+
+  linkMercadoPago() {
+      this.paymentService.getAuthUrl().subscribe(res => {
+          window.location.href = res.url;
+      });
   }
 
   loadData() {

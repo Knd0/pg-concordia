@@ -85,4 +85,13 @@ export class CartService {
 
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   }
+
+  getCheckoutItems() {
+    return this.cartItemsSubject.value.map(item => ({
+      id: item.product.id,
+      title: item.product.name,
+      quantity: item.quantity,
+      unit_price: item.product.isOffer && item.product.offerPrice ? item.product.offerPrice : item.product.price
+    }));
+  }
 }
