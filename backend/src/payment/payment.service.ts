@@ -14,6 +14,11 @@ export class PaymentService {
   ) {}
 
   private async getClient() {
+    const envAccessToken = this.configService.get('MERCADO_PAGO_ACCESS_TOKEN');
+    if (envAccessToken) {
+        return new MercadoPagoConfig({ accessToken: envAccessToken });
+    }
+
     const settings = await this.settingsRepository.findOne({ where: { id: 1 } });
     if (!settings || !settings.mercadoPagoAccessToken) {
       throw new BadRequestException('Mercado Pago not linked');
