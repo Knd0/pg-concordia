@@ -67,7 +67,7 @@ export class CheckoutComponent implements OnInit {
     this.loading = true;
     this.paymentService.createPreference(this.items, this.shippingCost).subscribe({
       next: (res) => {
-        window.location.href = res.sandbox_init_point; // Use sandbox for dev
+        window.location.href = res.init_point; // Production URL
       },
       error: (err) => {
         console.error(err);
