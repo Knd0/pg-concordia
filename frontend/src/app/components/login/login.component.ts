@@ -77,11 +77,15 @@ export class LoginComponent {
   ) {}
 
   login() {
-    if (this.authService.login(this.email, this.password)) {
-      this.notificationService.success('Bienvenido Admin');
-      this.router.navigate(['/admin']);
-    } else {
-      this.notificationService.error('Credenciales inválidas');
-    }
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.notificationService.success('Bienvenido Admin');
+        this.router.navigate(['/admin']);
+      },
+      error: (err) => {
+        this.notificationService.error('Credenciales inválidas');
+        console.error(err);
+      }
+    });
   }
 }
