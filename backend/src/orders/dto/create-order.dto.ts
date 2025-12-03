@@ -2,8 +2,8 @@ import { IsString, IsNotEmpty, IsArray, ValidateNested, IsNumber, IsOptional } f
 import { Type } from 'class-transformer';
 
 class CreateOrderItemDto {
-  @IsNumber()
-  productId: number;
+  @IsString()
+  productId: string;
 
   @IsNumber()
   quantity: number;

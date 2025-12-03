@@ -54,15 +54,15 @@ export class ProductsService {
     return this.productsRepository.find({ where });
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.productsRepository.findOneBy({ id });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  update(id: string, updateProductDto: UpdateProductDto) {
     return this.productsRepository.update(id, updateProductDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.productsRepository.delete(id);
   }
 }

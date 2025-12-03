@@ -37,12 +37,12 @@ export class CartService {
     }
   }
 
-  removeFromCart(productId: number) {
+  removeFromCart(productId: string) {
     const currentItems = this.cartItemsSubject.value;
     this.cartItemsSubject.next(currentItems.filter(item => item.product.id !== productId));
   }
 
-  updateQuantity(productId: number, quantity: number) {
+  updateQuantity(productId: string, quantity: number) {
     const currentItems = this.cartItemsSubject.value;
     const item = currentItems.find(i => i.product.id === productId);
     if (item) {

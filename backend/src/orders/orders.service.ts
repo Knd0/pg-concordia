@@ -53,14 +53,14 @@ export class OrdersService {
     });
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.ordersRepository.findOne({
       where: { id },
       relations: ['items', 'items.product'],
     });
   }
 
-  async finalizeOrder(id: number) {
+  async finalizeOrder(id: string) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -100,16 +100,16 @@ export class OrdersService {
     }
   }
 
-  async updateDescription(id: number, description: string) {
+  async updateDescription(id: string, description: string) {
     await this.ordersRepository.update(id, { description });
     return this.findOne(id);
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
+  update(id: string, updateOrderDto: UpdateOrderDto) {
     return this.ordersRepository.update(id, updateOrderDto);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.ordersRepository.delete(id);
   }
 }

@@ -25,7 +25,7 @@ export class ApiService {
     return this.http.get<Product[]>(`${this.apiUrl}/products`, { params: filters });
   }
 
-  updateProduct(id: number, data: any): Observable<Product> {
+  updateProduct(id: string, data: any): Observable<Product> {
     return this.http.patch<Product>(`${this.apiUrl}/products/${id}`, data);
   }
 
@@ -41,19 +41,19 @@ export class ApiService {
     return this.http.get<any[]>(`${this.apiUrl}/orders`);
   }
 
-  finalizeOrder(id: number): Observable<any> {
+  finalizeOrder(id: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/orders/${id}/finalize`, {});
   }
 
-  updateOrderDescription(id: number, description: string): Observable<any> {
+  updateOrderDescription(id: string, description: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/orders/${id}/description`, { description });
   }
 
-  updateOrder(id: number, data: any): Observable<any> {
+  updateOrder(id: string, data: any): Observable<any> {
     return this.http.patch(`${this.apiUrl}/orders/${id}`, data);
   }
 
-  deleteOrder(id: number): Observable<any> {
+  deleteOrder(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/orders/${id}`);
   }
 }
