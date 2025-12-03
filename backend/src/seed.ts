@@ -66,14 +66,14 @@ async function bootstrap() {
 
   for (const product of products) {
     // Check if product exists (simple check by name)
-    // Note: In a real seed, you might want to clear the table or use upsert.
-    // Here we just create if not exists to avoid duplicates on re-run.
-    // Since ProductsService might not have findByName, we'll just create it blindly
-    // or we can fetch all and filter. For simplicity in this demo, let's just create.
-    // Better approach:
-    await productsService.create(product);
+    const allProducts = await productsService.findAll({});
+    const exists = allProducts.find(p => p.name === product.name);
+    
+    if (!exists) {
+      await productsService.create(product);
+    }
   }
-  console.log(`✅ Created ${products.length} products`);
+  console.log(`✅ Products check/creation completed`);
 
   // 3. Create Sample Orders
   const sampleOrders = [
@@ -101,23 +101,19 @@ async function bootstrap() {
     }
   ];
 
-  for (const orderData of sampleOrders) {
-    const { items, ...orderInfo } = orderData;
-    // We need to construct the order with items properly
-    // This depends on how OrdersService.create is implemented.
-    // Assuming it takes a DTO that includes items.
-    // If not, we might need to use the repository directly or adjust the service.
-    // Let's assume for now we can pass the structure.
-    // If OrdersService.create expects a CreateOrderDto, we should match it.
-    
-    // Actually, looking at previous context, OrdersService likely saves the entity.
-    // Let's try to save it via service.
-    await ordersService.create({
-      ...orderInfo,
-      items: items.map(i => ({ ...i, productId: i.productId })) as any // Casting to avoid strict type checks if DTO differs
-    });
+  const allOrders = await ordersService.findAll();
+  if (allOrders.length === 0) {
+    for (const orderData of sampleOrders) {
+      const { items, ...orderInfo } = orderData;
+      await ordersService.create({
+        ...orderInfo,
+        items: items.map(i => ({ ...i, productId: i.productId })) as any
+      });
+    }
+    console.log(`✅ Created ${sampleOrders.length} sample orders`);
+  } else {
+    console.log('ℹ️ Orders already exist, skipping sample order creation');
   }
-  console.log(`✅ Created ${sampleOrders.length} sample orders`);
 
   await app.close();
   console.log('🌱 Seed completed');
