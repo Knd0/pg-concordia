@@ -76,7 +76,7 @@ export class PaymentService {
     const preference = new Preference(client);
 
     const mpItems = items.map(item => ({
-      id: item.id?.toString() || '0',
+      id: item.id?.toString() || 'unknown',
       title: item.title,
       quantity: item.quantity,
       unit_price: Number(item.unit_price),

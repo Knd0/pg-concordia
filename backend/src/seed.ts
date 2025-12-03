@@ -84,8 +84,8 @@ async function bootstrap() {
       type: 'BUILDER',
       description: 'PC Gamer Alta Gama',
       items: [
-        { productId: 1, quantity: 1, price: 589 }, // i9
-        { productId: 5, quantity: 1, price: 1599 }, // 4090
+        { productName: 'Intel Core i9-14900K', quantity: 1, price: 589 },
+        { productName: 'NVIDIA GeForce RTX 4090', quantity: 1, price: 1599 },
       ]
     },
     {
@@ -95,19 +95,28 @@ async function bootstrap() {
       type: 'CART',
       description: 'Upgrade de RAM y SSD',
       items: [
-        { productId: 11, quantity: 1, price: 129 }, // RAM
-        { productId: 13, quantity: 1, price: 169 }, // SSD
       ]
     }
   ];
 
+  const allDbProducts = await productsService.findAll({});
   const allOrders = await ordersService.findAll();
+  
   if (allOrders.length === 0) {
     for (const orderData of sampleOrders) {
       const { items, ...orderInfo } = orderData;
+      const orderItems = items.map(i => {
+         const product = allDbProducts.find(p => p.name === (i as any).productName);
+         return {
+             quantity: i.quantity,
+             price: i.price,
+             productId: product ? product.id : null
+         };
+      });
+
       await ordersService.create({
         ...orderInfo,
-        items: items.map(i => ({ ...i, productId: i.productId })) as any
+        items: orderItems as any
       });
     }
     console.log(`✅ Created ${sampleOrders.length} sample orders`);
